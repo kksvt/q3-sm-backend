@@ -1,0 +1,26 @@
+{
+  "name": "q3e-sm",
+  "version": "0.9.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "start-static": "cp -r ../q3-sm-frontend/build/* ./public/static/ && node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "https": "^1.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "nodemon": "^3.0.3",
+    "pkg": "^5.8.1",
+    "ws": "^8.16.0"
+  }
+}
