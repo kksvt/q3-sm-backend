@@ -35,21 +35,21 @@ const setup_console = (server, on_message) => {
                 }
                 const username = data[0];
                 const token = data[1];
-                let taken = false;
-                wss.clients.forEach((client) => { 
-                    if (client !== ws && client.username === username) {
-                        taken = true;
-                    }
-                });
-                if (taken) {
-                    console.log('...is using a taken username...');
-                    ws.send('Someone else is using this username.');
-                    ws.close();
-                    return;
-                }
                 jwt.verify(token, jwt_secret, (err, user) => {
                     if (err || user.username !== username) {
                         console.log('...failed to authenticate');
+                        ws.close();
+                        return;
+                    }
+                    let taken = false;
+                    wss.clients.forEach((client) => { 
+                        if (client !== ws && _.isEqual(user, client.user)) {
+                            taken = true;
+                        }
+                    });
+                    if (taken) {
+                        console.log('...is using a taken token...');
+                        ws.send('Someone else is using this token. Make sure you don\'t have multiple tabs open.');
                         ws.close();
                         return;
                     }

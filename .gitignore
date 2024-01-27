@@ -2,3 +2,7 @@ node_modules/*
 
 public/downloads/*
 public/static/*
+
+database/*.db
+
+.env.local

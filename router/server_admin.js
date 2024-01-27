@@ -5,16 +5,12 @@ const jwt = require('jsonwebtoken');
 const { disconnect_user } = require('../manager/server_console.js');
 const { do_sync, sync_enabled} = require('../manager/server_download.js');
 const { q3_isrunning, q3_shutdown, q3_launch, q3_cron_online } = require('../manager/server_managing.js');
+const { authenticated_user } = require('../manager/database.js');
 
 let pending_shutdown = false;
 let pending_launch = false;
 
-require('dotenv').config();
-
 const { jwt_secret } = require('../token/token.js'); 
-
-const admin_username = process.env.ADMIN_USERNAME;
-const admin_password = process.env.ADMIN_PASSWORD;
 
 const is_valid_name = (username) => {
     if (!username || !username.length)
@@ -23,10 +19,6 @@ const is_valid_name = (username) => {
         return false;
     return true;
 }
-
-const authenticated_user = (username, password) => {
-    return (username === admin_username && password === admin_password);
-};
 
 server_admin.use('/auth/*', (req, res, next) => {
     if (!req.session.authorization || !req.session.authorization.username) {
@@ -80,20 +72,27 @@ server_admin.post('/login', (req, res) => {
       return res.status(400).json({message: 'nopassword'});
     }
     console.log(`Attempted login as ${username} from ${req.ip}`);
-    if (!authenticated_user(username, password)) {
-        console.log('...attempt failed');
-        return res.status(400).json({message: 'invalid'});
-    }
-    console.log('...attempt successful');
-    let accessToken = jwt.sign({username: username, data: password}, jwt_secret, {expiresIn: 8 * 60 * 60});
-    req.session.authorization = {accessToken, username};
-    req.session.save((err) => {
+    authenticated_user(username, password, (err, reject) => {
         if (err) {
-          console.error('Error saving session:', err);
-          res.status(500).send('Internal Server Error');
+            console.error('authenticated user failure ' + err);
+            res.status(500).send({message: 'Internal Server Error'});
+            return;
         }
-        console.log('session id: ' + req.sessionID);
-        return res.status(200).json({message: 'auth_success', username: username, accessToken: accessToken});
+        if (reject) {
+            console.log('...attempt failed: ' + reject);
+            return res.status(401).json({message: 'invalid'});
+        }
+        console.log('...attempt successful');
+        let accessToken = jwt.sign({username: username}, jwt_secret, {expiresIn: 8 * 60 * 60});
+        req.session.authorization = {accessToken, username};
+        req.session.save((err) => {
+            if (err) {
+            console.error('Error saving session:', err);
+            res.status(500).send('Internal Server Error');
+            }
+            console.log('session id: ' + req.sessionID);
+            return res.status(200).json({message: 'auth_success', username: username, accessToken: accessToken});
+        });
     });
 });
 

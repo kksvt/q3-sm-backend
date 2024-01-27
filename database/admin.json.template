@@ -1,0 +1,13 @@
+{
+    "info": "admin.json will be automatically removed after the users are added.",
+    "users": [
+            {
+                "username": "admin",
+                "password": "password1"
+            },
+            {
+                "username": "admin2",
+                "password": "password2"
+            }
+    ]
+}
