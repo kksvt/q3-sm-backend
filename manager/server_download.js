@@ -45,6 +45,7 @@ const sync_files = (startup, pathname, depth, max_depth) => {
         const fullname = path.resolve(path.join(pathname, dirent.name));
         if (dirent.isDirectory()) {
             sync_files(startup, fullname, depth + 1, max_depth);
+            continue;
         }
         if (!file_allowed(fullname)) {
             continue;
