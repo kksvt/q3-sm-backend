@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session')
+const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
@@ -66,6 +67,16 @@ set_q3_onprint((data) => {
 });
 
 https_server.listen(process.env.APP_PORT, () => console.log('HTTPS Server is running on port ' + process.env.APP_PORT));
+
+// redirect to https
+const httpServer = http.createServer((req, res) => {
+  res.writeHead(301, { 'Location': 'https://' + req.headers['host'] + req.url });
+  res.end();
+});
+
+httpServer.listen(80, () => {
+  console.log('HTTP server listening on port 80 (for redirection)');
+});
 
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal received.');
