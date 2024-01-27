@@ -70,12 +70,12 @@ https_server.listen(process.env.APP_PORT, () => console.log('HTTPS Server is run
 
 // redirect to https
 const httpServer = http.createServer((req, res) => {
-  res.writeHead(301, { 'Location': 'https://' + req.headers['host'] + req.url });
+  res.writeHead(301, { 'Location': `${process.env.APP_ADDR}/${req.url}` });
   res.end();
 });
 
-httpServer.listen(80, () => {
-  console.log('HTTP server listening on port 80 (for redirection)');
+httpServer.listen(process.env.APP_REDIRECT_PORT, () => {
+  console.log('HTTP redirection server is running on port ' + process.env.APP_REDIRECT_PORT);
 });
 
 process.on('SIGTERM', () => {
