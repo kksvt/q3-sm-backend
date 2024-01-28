@@ -41,18 +41,6 @@ const setup_console = (server, on_message) => {
                         ws.close();
                         return;
                     }
-                    let taken = false;
-                    wss.clients.forEach((client) => { 
-                        if (client !== ws && _.isEqual(user, client.user)) {
-                            taken = true;
-                        }
-                    });
-                    if (taken) {
-                        console.log('...is using a taken token...');
-                        ws.send('Someone else is using this token. Make sure you don\'t have multiple tabs open.');
-                        ws.close();
-                        return;
-                    }
                     ws.user = user;
                     ws.username = username;
                     ws.ip_address = req.socket.remoteAddress;
