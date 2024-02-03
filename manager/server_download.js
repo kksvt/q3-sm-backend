@@ -60,8 +60,10 @@ const sync_files = (startup, pathname, depth, max_depth) => {
 }
 
 const do_sync = (startup) => {
-    if (sync_enabled())
+    if (sync_enabled()) {
         sync_files(startup, process.env.SERVER_HOMEPATH, 0, 1);
+        all_downloads.sort((a, b) => a.name.localeCompare(b.name));
+    }
 }
 
 do_sync(true);

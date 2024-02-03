@@ -45,8 +45,8 @@ const setup_console = (server, on_message) => {
                     ws.username = username;
                     ws.ip_address = req.socket.remoteAddress;
                     console.log('...authentication successful!');
-                    send_console(`${ws.username} (${ws.ip_address}) connected\n`);
                     ws.send(output_log.reduce((acc, current) => acc + current, ''));
+                    send_console(`${ws.username} (${ws.ip_address}) connected\n`);
                 });
                 return;
             }

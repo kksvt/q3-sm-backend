@@ -4,7 +4,6 @@ const session = require('express-session')
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const jwt = require('jsonwebtoken');
 
 const { server_admin } = require('./router/server_admin');
 const { server_client } = require('./router/server_client');
