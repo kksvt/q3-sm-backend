@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const config = JSON.parse(fs.readFileSync('./config/downloads.json'));
+let config = { enabled: 'no' };
 
 require('dotenv').config();
 
@@ -60,6 +60,8 @@ const sync_files = (startup, pathname, depth, max_depth) => {
 }
 
 const do_sync = (startup) => {
+    all_downloads.length = 0;
+    config = JSON.parse(fs.readFileSync('./config/downloads.json'));
     if (sync_enabled()) {
         sync_files(startup, process.env.SERVER_HOMEPATH, 0, 1);
         all_downloads.sort((a, b) => a.name.localeCompare(b.name));

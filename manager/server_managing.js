@@ -10,8 +10,8 @@ const fs_homepath = process.env.SERVER_HOMEPATH;
 const game_port = process.env.SERVER_PORT;
 const launch_args = ['+set', 'fs_homepath', fs_homepath, '+set', 'net_port', game_port, ...process.env.SERVER_ARGS.split(' ')];
 const rcon = process.env.RCON_PASSWORD;
-const q3_start = process.env.START_BY_DEFAULT && process.env.START_BY_DEFAULT.toLowerCase() == 'true';
-const log_console = process.env.LOG_CONSOLE && process.env.LOG_CONSOLE.toLowerCase() == 'true';
+const q3_start = process.env.START_BY_DEFAULT && process.env.START_BY_DEFAULT.toLowerCase() === 'true';
+const log_console = process.env.LOG_CONSOLE && process.env.LOG_CONSOLE.toLowerCase() === 'true';
 const max_attempts = process.env.MAX_FAILED_QUERIES;
 
 const q3_hexbyte = Buffer.from('FF', 'hex');
