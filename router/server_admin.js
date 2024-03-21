@@ -9,6 +9,7 @@ const { authenticated_user } = require('../manager/database.js');
 
 let pending_shutdown = false;
 let pending_launch = false;
+let pending_sync = false;
 
 const { jwt_secret } = require('../token/token.js'); 
 
@@ -87,8 +88,8 @@ server_admin.post('/login', (req, res) => {
         req.session.authorization = {accessToken, username};
         req.session.save((err) => {
             if (err) {
-            console.error('Error saving session:', err);
-            res.status(500).send('Internal Server Error');
+                console.error('Error saving session:', err);
+                res.status(500).send('Internal Server Error');
             }
             console.log('session id: ' + req.sessionID);
             return res.status(200).json({message: 'auth_success', username: username, accessToken: accessToken});
@@ -103,13 +104,18 @@ server_admin.post('/auth/logout', (req, res) => {
 });
 
 server_admin.post('/auth/sync', (req, res) => {
+    if (pending_sync) {
+        return res.status(405).send({message: 'The synchronization is in progress.'});
+    }
     if (!sync_enabled()) {
         return res.status(501).send({message: 'This feature is currently disabled'});
     }
+    pending_sync = true;
     console.log(`/auth/sync from ${req.ip}`);
     const promise = new Promise((resolve, reject) => {
         do_sync();
         resolve('File sync finished.');
+        pending_sync = false;
     });
     promise.then((message) => { console.log(message)}, () => {});
     return res.status(200).send({message: 'Attempting to sync server files with the downloads...'});
