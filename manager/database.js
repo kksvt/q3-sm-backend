@@ -73,11 +73,11 @@ const authenticated_user = (username, password, callback) => {
         const hashed_password = rows[0]['password'];
         bcrypt.compare(password, hashed_password, (err, result) => {
             if (err) {
-                callback(err, undefined, undefined);
+                callback(err, undefined);
                 return; 
             }
             if (!result) {
-                callback(undefined, 'Invalid username or password', undefined);
+                callback(undefined, 'Invalid username or password');
                 return;
             }
             callback(undefined, undefined);
