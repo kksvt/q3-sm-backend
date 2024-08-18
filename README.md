@@ -17,7 +17,6 @@ The **.env** file inside the main directory contains the settings necessary to p
     SERVER_PORT=
     RSA_KEY=
     RSA_CERT=
-    SESSION_SECRET=
     JWT_SECRET=
     SERVER_BIN_PATH=
     SERVER_HOMEPATH=
@@ -37,7 +36,6 @@ SERVER_IP | The IP of the game server. This has be the IP address that will be v
 SERVER_PORT | The port of the game server.
 RSA_KEY | The path to the RSA private key, used for encryption.
 RSA_CERT | The path to the certificate.
-SESSION_SECRET | The path to the session secret key.
 JWT_SECRET | The path to the JWT secret key.
 SERVER_BIN_PATH | The path to the game server's executable.
 SERVER_HOMEPATH | The value of the *fs_homepath* cvar, which should typically point to the executable's directory.
