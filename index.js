@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const session = require('express-session')
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const cookieParser = require('cookie-parser');
 
 const { server_admin } = require('./router/server_admin');
 const { server_client } = require('./router/server_client');
@@ -14,16 +14,6 @@ const { close_db } = require('./manager/database.js');
 require('dotenv').config();
 
 const app = express();
-const session_secret = fs.readFileSync(process.env.SESSION_SECRET).toString();
-
-app.use(session({
-  secret: session_secret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 8,
-  },
-}));
 
 //enable cors if the fronted is hosted under a different url
 if (process.env.FRONTEND_URL) {
@@ -35,6 +25,7 @@ if (process.env.FRONTEND_URL) {
   }));
 }
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.use('/admin', server_admin);
@@ -66,7 +57,7 @@ setup_console(https_server,
 
 //send the game server's output to websocket
 set_q3_onprint((data) => {
-  send_console(data);
+  send_console(data, false);
 });
 
 https_server.listen(process.env.APP_PORT, () => console.log('HTTPS Server is running on port ' + process.env.APP_PORT));

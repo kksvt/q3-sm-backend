@@ -35,7 +35,7 @@ const set_q3_onprint = (func) => {
 const q3_launch = () => {
     console.log(`Starting game server on port ${game_port}`);
     game_server_running = true;
-    game_server = spawn(launch_bin, launch_args, {cwd: fs_homepath})
+    game_server = spawn(launch_bin, launch_args, {cwd: fs_homepath, windowsHide: false})
 
     game_server.stdout.on('data', (chunk) => {
         if (log_console) {
@@ -141,10 +141,10 @@ let querying = false;
 let timeout = null;
 
 const q3_checkonline = () => {
-    /*if (!game_server_running) {
+    if (!game_server_running) {
         q3_launch();
         return;
-    }*/
+    }
     //process running doesn't necessarily mean that the server is responsive - it could be hanging after q3's G_Error
     const udp_socket = dgram.createSocket('udp4');
     const buf = q3_packet('getinfo');
