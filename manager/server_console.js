@@ -99,7 +99,7 @@ const setup_console = (server, on_message) => {
             });
 
             ws.send(output_log.reduce((acc, current) => acc + current, ''));
-            send_console(`${ws.user.username} (${ws.ip_address}) connected\n`, true);
+            send_console(`${ws.user.username} (${ws.ip_address}) connected`, true);
         });
       
       });
