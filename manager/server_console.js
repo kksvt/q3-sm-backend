@@ -56,7 +56,7 @@ const setup_console = (server, on_message) => {
     wss = new WebSocket.Server({ server: server, path: '/admin/console'});
 
     wss.on('connection', (ws, req) => {
-        console.log(`Inbound connection from ${req.socket.remoteAddress}`);
+        console.log(`${new Date()}: Inbound connection from ${req.socket.remoteAddress}`);
 
         if (!req.headers || !req.headers.cookie) {
             console.log('...has no cookies...');
@@ -87,19 +87,19 @@ const setup_console = (server, on_message) => {
 
             ws.on('close', () => {
                 if (ws.user.username && ws.ip_address)
-                    console.log(`Q3 Panel: ${ws.user.username} (${ws.ip_address}) disconnected from the Server Console`);
+                    console.log(`${new Date()}: ${ws.user.username} (${ws.ip_address}) disconnected from the Server Console`);
             });
 
             ws.on('message', (message) => {
                 check_validation(ws, () => {
                         on_message(message);
-                        send_console(`Q3 Panel: Cmd from ${ws.user.username} (${ws.ip_address}): ${message}`, true);
+                        send_console(`${new Date()}: Cmd from ${ws.user.username} (${ws.ip_address}): ${message}`, true);
                     }
                 );
             });
 
             ws.send(output_log.reduce((acc, current) => acc + current, ''));
-            send_console(`${ws.user.username} (${ws.ip_address}) connected`, true);
+            send_console(`${new Date()}: ${ws.user.username} (${ws.ip_address}) connected`, true);
         });
       
       });

@@ -40,8 +40,7 @@ server_admin.post('/auth/quit', (req, res) => {
         return res.status(405).send({message: 'Server is offline'});
     }
     pending_shutdown = true;
-    console.log(`/auth/quit by ${req.ip}`);
-    console.log(`Attempting to shut down server by ${req.ip}`);
+    console.log(`${new Date()}: /auth/quit by ${req.ip}`);
     q3_shutdown(() => {
         pending_shutdown = false;
     });
@@ -56,7 +55,7 @@ server_admin.post('/auth/launch', (req, res) => {
         return res.status(405).send({message: 'The restart cronjob is running and will automatically start the server.'});
     }
     pending_launch = true;
-    console.log(`/auth/launch by ${req.ip}`);
+    console.log(`${new Date()}: /auth/launch by ${req.ip}`);
     q3_launch();
     setTimeout(() => { pending_launch = false; }, 3000); //put some cooldown on it
     return res.status(200).send({message: 'Attempting to turn on the server...'});
@@ -74,7 +73,7 @@ server_admin.post('/login', (req, res) => {
       return res.status(400).json({message: 'nopassword'});
     }
 
-    console.log(`Attempted login as ${username} from ${req.ip}`);
+    console.log(`${new Date()}: Attempted login as ${username} from ${req.ip}`);
     authenticated_user(username, password, (err, reject) => {
         if (err) {
             console.error('authenticated user failure ' + err);
@@ -113,7 +112,7 @@ server_admin.post('/auth/sync', (req, res) => {
         return res.status(501).send({message: 'This feature is currently disabled'});
     }
     pending_sync = true;
-    console.log(`/auth/sync from ${req.ip}`);
+    console.log(`${new Date()}: /auth/sync from ${req.ip}`);
     const promise = new Promise((resolve, reject) => {
         do_sync();
         resolve('File sync finished.');
