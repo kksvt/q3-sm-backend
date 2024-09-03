@@ -2,7 +2,7 @@ const express = require('express');
 const server_admin = express.Router();
 const jwt = require('jsonwebtoken');
 
-const { disconnect_user } = require('../manager/server_console.js');
+const { disconnect_user, send_console } = require('../manager/server_console.js');
 const { do_sync, sync_enabled} = require('../manager/server_download.js');
 const { q3_isrunning, q3_shutdown, q3_launch, q3_cron_online } = require('../manager/server_managing.js');
 const { authenticated_user } = require('../manager/database.js');
@@ -40,7 +40,7 @@ server_admin.post('/auth/quit', (req, res) => {
         return res.status(405).send({message: 'Server is offline'});
     }
     pending_shutdown = true;
-    console.log(`${new Date()}: /auth/quit by ${req.ip}`);
+    send_console(`${new Date()}: /auth/quit by ${req.ip}`, true);
     q3_shutdown(() => {
         pending_shutdown = false;
     });
@@ -55,7 +55,7 @@ server_admin.post('/auth/launch', (req, res) => {
         return res.status(405).send({message: 'The restart cronjob is running and will automatically start the server.'});
     }
     pending_launch = true;
-    console.log(`${new Date()}: /auth/launch by ${req.ip}`);
+    send_console(`${new Date()}: /auth/launch by ${req.ip}`, true);
     q3_launch();
     setTimeout(() => { pending_launch = false; }, 3000); //put some cooldown on it
     return res.status(200).send({message: 'Attempting to turn on the server...'});
@@ -112,7 +112,7 @@ server_admin.post('/auth/sync', (req, res) => {
         return res.status(501).send({message: 'This feature is currently disabled'});
     }
     pending_sync = true;
-    console.log(`${new Date()}: /auth/sync from ${req.ip}`);
+    send_console(`${new Date()}: /auth/sync from ${req.ip}`, true);
     const promise = new Promise((resolve, reject) => {
         do_sync();
         resolve('File sync finished.');
