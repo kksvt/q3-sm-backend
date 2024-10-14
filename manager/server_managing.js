@@ -197,11 +197,11 @@ const q3_isrunning = () => {
 };
 
 const q3_shutdown = (callback) => {
+    q3_quit_cronjobs();
     if (!q3_isrunning()) {
         callback();
         return;
     }
-    q3_quit_cronjobs();
     q3_sendcmd('exec pubcfg/quit.cfg', () => {}); //attempt a graceful shutdown first, with whatever the server owner decides is appropriate
     setTimeout(() => {
         game_server.kill('SIGTERM');

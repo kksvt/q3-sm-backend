@@ -36,7 +36,7 @@ server_admin.use('/auth/*', (req, res, next) => {
   });
 
 server_admin.post('/auth/quit', (req, res) => {
-    if (pending_shutdown || !q3_isrunning()) {
+    if (pending_shutdown || (!q3_isrunning() && !q3_cron_online())) {
         return res.status(405).send({message: 'Server is offline'});
     }
     pending_shutdown = true;
