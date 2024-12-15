@@ -40,7 +40,7 @@ server_admin.post('/auth/quit', (req, res) => {
         return res.status(405).send({message: 'Server is offline'});
     }
     pending_shutdown = true;
-    send_console(`${new Date()}: /auth/quit by ${req.ip}`, true);
+    send_console(`${new Date()}: /auth/quit by ${req.user.username} ${req.ip}`, true);
     q3_shutdown(() => {
         pending_shutdown = false;
     });
@@ -55,7 +55,7 @@ server_admin.post('/auth/launch', (req, res) => {
         return res.status(405).send({message: 'The restart cronjob is running and will automatically start the server.'});
     }
     pending_launch = true;
-    send_console(`${new Date()}: /auth/launch by ${req.ip}`, true);
+    send_console(`${new Date()}: /auth/launch by ${req.user.username} ${req.ip}`, true);
     q3_launch();
     setTimeout(() => { pending_launch = false; }, 3000); //put some cooldown on it
     return res.status(200).send({message: 'Attempting to turn on the server...'});
@@ -112,7 +112,7 @@ server_admin.post('/auth/sync', (req, res) => {
         return res.status(501).send({message: 'This feature is currently disabled'});
     }
     pending_sync = true;
-    send_console(`${new Date()}: /auth/sync from ${req.ip}`, true);
+    send_console(`${new Date()}: /auth/sync from ${req.user.username} ${req.ip}`, true);
     const promise = new Promise((resolve, reject) => {
         do_sync();
         resolve('File sync finished.');

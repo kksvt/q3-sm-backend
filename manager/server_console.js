@@ -29,10 +29,14 @@ const check_validation = (client, callback_valid) => {
 };
 
 const send_console = (msg, log_to_console) => {
-    const msg_str = msg.toString();
+    let msg_str = msg.toString();
 
     if (msg_str.length < 1) {
         return;
+    }
+
+    if (msg_str.charAt(msg.length - 1) != '\n') {
+        msg_str += '\n';
     }
 
     output_log.push(msg_str);
