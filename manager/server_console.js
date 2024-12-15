@@ -35,6 +35,10 @@ const send_console = (msg, log_to_console) => {
         return;
     }
 
+    if (log_to_console) {
+        console.log(msg_str);
+    }
+
     if (msg_str.charAt(msg.length - 1) != '\n') {
         msg_str += '\n';
     }
@@ -49,10 +53,6 @@ const send_console = (msg, log_to_console) => {
             check_validation(client, () => {client.send(msg_str); } );
         }
     });
-
-    if (log_to_console) {
-        console.log(msg_str);
-    }
 
 };
 

@@ -13,6 +13,7 @@ const rcon = process.env.RCON_PASSWORD;
 const q3_start = process.env.START_BY_DEFAULT && process.env.START_BY_DEFAULT.toLowerCase() === 'true';
 const log_console = process.env.LOG_CONSOLE && process.env.LOG_CONSOLE.toLowerCase() === 'true';
 const max_attempts = process.env.MAX_FAILED_QUERIES;
+const send_stdin = process.env.SEND_STDIN && process.env.SEND_STDIN.toLowerCase() === 'true';
 
 const q3_hexbyte = Buffer.from('FF', 'hex');
 const q3_msg_prefix = Buffer.concat([q3_hexbyte, q3_hexbyte, q3_hexbyte, q3_hexbyte]);
@@ -141,7 +142,7 @@ let querying = false;
 let timeout = null;
 
 const q3_checkonline = () => {
-    if (!game_server_running) {
+    if (!q3_isrunning()) {
         q3_launch();
         return;
     }
@@ -180,6 +181,15 @@ const q3_checkonline = () => {
 };
 
 const q3_sendcmd = (cmd, callback) => {
+    if (!q3_isrunning()) {
+        return;
+    }
+    
+    if (send_stdin) {
+        game_server.stdin.write(`${cmd}\n`);
+        return;
+    }
+
     const udp_socket = dgram.createSocket('udp4');
     const buf = q3_packet(`rcon ${rcon} ${cmd}`);
     udp_socket.send(buf, 0, buf.length, game_port, server_ip, (err) => {
