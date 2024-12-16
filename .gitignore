@@ -5,4 +5,4 @@ public/static/*
 
 database/*.db
 
-.env.local
+.env
