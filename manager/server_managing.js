@@ -34,6 +34,10 @@ const set_q3_onprint = (func) => {
 }
 
 const q3_launch = () => {
+    if (game_server_running) {
+        return;
+    }
+    
     console.log(`Starting game server on port ${game_port}`);
     game_server_running = true;
     game_server = spawn(launch_bin, launch_args, {cwd: fs_homepath, windowsHide: false})
