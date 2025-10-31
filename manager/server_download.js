@@ -12,7 +12,9 @@ const all_downloads = []
 const file_allowed = (filename) => {
     if (!filename || filename.length < 4)
         return false;
-    if (!filename.endsWith('.zip') && !filename.endsWith('.pk3'))
+    if (!filename.toLowerCase().endsWith('.zip') && !filename.toLowerCase().endsWith('.pk3'))
+        return false;
+    if (!filename.startsWith(path.resolve(homepath)))
         return false;
     if (config.mode === 'whitelist') {
         if (config.files.filter((mapname) => {
@@ -37,6 +39,10 @@ const sync_enabled = () => {
     return (config.enabled && config.enabled.toLowerCase() === 'yes');
 }
 
+const hide_files = () => {
+    return (config.secret && config.secret.toLowerCase() === 'yes');
+}
+
 const sync_files = (startup, pathname, depth, min_depth, max_depth) => {
     if (depth > max_depth)
         return;
@@ -51,19 +57,10 @@ const sync_files = (startup, pathname, depth, min_depth, max_depth) => {
             //you should not sync files from gamedata for ex
             continue;
         }
-        const dest = `./public/downloads/${dirent.name}`;
-        const file_exists = fs.existsSync(dest);
         if (!file_allowed(fullname)) {
-            if (file_exists) {
-                console.log(`${dest} used to be a downloadable file, but it is no longer allowed. Removing.`);
-                fs.unlinkSync(dest);
-            }
             continue;
         }
-        console.log('Downloadable file: ' + dest);
-        all_downloads.push({name: dirent.name, size:  Math.round(fs.statSync(fullname).size * 100 / (1024 * 1024)) / 100});
-        if (!file_exists || (startup && config.overwrite && config.overwrite.toLowerCase() === 'yes'))
-            fs.copyFileSync(fullname, dest);
+        all_downloads.push({name: dirent.name, fullpath: fullname, size:  Math.max(Math.round(fs.statSync(fullname).size * 100 / (1024 * 1024)) / 100, 0.01)});
     }
     curr_path.closeSync();
 }
@@ -71,12 +68,27 @@ const sync_files = (startup, pathname, depth, min_depth, max_depth) => {
 const do_sync = (startup) => {
     all_downloads.length = 0;
     config = JSON.parse(fs.readFileSync('./config/downloads.json'));
+    const valid_modes = ['whitelist', 'blacklist'];
+    if (!valid_modes.includes(config.mode)) {
+        throw new Error(`Invalid config mode: ${config.mode}`);
+    }
+    if (!Array.isArray(config.files)) {
+        throw new Error(`Config "files" must be an array`);
+    }
     if (sync_enabled()) {
         sync_files(startup, process.env.SERVER_HOMEPATH, 0, 1, 1);
-        all_downloads.sort((a, b) => a.name.localeCompare(b.name));
+        if (all_downloads.length > 0) {
+            all_downloads.sort((a, b) => a.name.localeCompare(b.name));
+            console.log('Downloadable files: ');
+            for (const file of all_downloads) {
+                console.log(`> ${file.name}: ${file.size} MB`);
+            }
+            return;
+        }
     }
+    console.log('There are no downloadable files.');
 }
 
 do_sync(true);
 
-module.exports = { do_sync, sync_enabled, all_downloads };
+module.exports = { do_sync, sync_enabled, all_downloads, hide_files };

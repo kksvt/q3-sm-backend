@@ -77,7 +77,7 @@ Option | Description | Sample value
 ---|---|---
 enabled | If set to yes, the download feature will be enabled. | "yes"
 mode | whitelist - only the files listed in the "files" field will be downloadable, blacklist - all files but the ones listed in the "files" field will be downloadable | "whitelist"
-overwrite | If set to yes, then all downloadable files will be copied to the download directory every time the application is started, regardless if they already exist in the download directory or not. | "no"
+secret | If set to "yes", then the download endpoint will return an empty array, even if files are available to download | "no"
 files | Comma separated list of files. | "Main/mp_pakmaps5.pk3", "coopmain/bin.pk3"
 
 ## Admins

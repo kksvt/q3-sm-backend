@@ -1,7 +1,7 @@
 {
-    "enabled": "no",
-    "mode": "whitelist",
-    "overwrite": "no",
+    "enabled": "yes",
+    "mode": "blacklist",
+    "secret": "no",
     "files": [
     ]
 }

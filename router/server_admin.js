@@ -108,9 +108,9 @@ server_admin.post('/auth/sync', (req, res) => {
     if (pending_sync) {
         return res.status(405).send({message: 'The synchronization is in progress.'});
     }
-    if (!sync_enabled()) {
+    /*if (!sync_enabled()) {
         return res.status(501).send({message: 'This feature is currently disabled'});
-    }
+    }*/
     pending_sync = true;
     send_console(`${new Date()}: /auth/sync from ${req.user.username} ${req.ip}`, true);
     const promise = new Promise((resolve, reject) => {
