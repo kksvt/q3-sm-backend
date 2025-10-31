@@ -1,6 +1,6 @@
 {
-    "enabled": "yes",
-    "mode": "blacklist",
+    "enabled": "no",
+    "mode": "whitelist",
     "secret": "no",
     "files": [
     ]
