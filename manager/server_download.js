@@ -5,7 +5,7 @@ let config = { enabled: 'no' };
 
 require('dotenv').config();
 
-const homepath = process.env.SERVER_HOMEPATH;
+const homepath = path.resolve(process.env.SERVER_HOMEPATH);
 
 const all_downloads = []
 
@@ -14,7 +14,7 @@ const file_allowed = (filename) => {
         return false;
     if (!filename.toLowerCase().endsWith('.zip') && !filename.toLowerCase().endsWith('.pk3'))
         return false;
-    if (!filename.startsWith(path.resolve(homepath)))
+    if (!filename.startsWith(homepath))
         return false;
     if (config.mode === 'whitelist') {
         if (config.files.filter((mapname) => {
@@ -60,7 +60,11 @@ const sync_files = (startup, pathname, depth, min_depth, max_depth) => {
         if (!file_allowed(fullname)) {
             continue;
         }
-        all_downloads.push({name: dirent.name, fullpath: fullname, size:  Math.max(Math.round(fs.statSync(fullname).size * 100 / (1024 * 1024)) / 100, 0.01)});
+        all_downloads.push({
+            name: path.relative(homepath, fullname), 
+            fullpath: fullname, 
+            size:  Math.max(Math.round(fs.statSync(fullname).size * 100 / (1024 * 1024)) / 100, 0.01)
+        });
     }
     curr_path.closeSync();
 }
@@ -76,7 +80,7 @@ const do_sync = (startup) => {
         throw new Error(`Config "files" must be an array`);
     }
     if (sync_enabled()) {
-        sync_files(startup, process.env.SERVER_HOMEPATH, 0, 1, 1);
+        sync_files(startup, homepath, 0, 1, 1);
         if (all_downloads.length > 0) {
             all_downloads.sort((a, b) => a.name.localeCompare(b.name));
             console.log('Downloadable files: ');
