@@ -40,7 +40,7 @@ server_client.get('/downloads/:path(*)', (req, res) => {
 
     const file = req.params.path;
     const match = all_downloads.filter((download) => {
-        return (path.relative(download.name, file) === '');
+        return path.normalize(download.name) === path.normalize(file);
     });
 
     if (!match.length) {

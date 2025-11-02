@@ -18,7 +18,7 @@ const file_allowed = (filename) => {
         return false;
     if (config.mode === 'whitelist') {
         if (config.files.filter((mapname) => {
-            return path.posix.relative(path.resolve(path.join(homepath, mapname)), filename) === '';
+            return path.normalize(path.resolve(path.join(homepath, mapname))) === path.normalize(filename);
         }).length > 0) {
             return true;
         }
@@ -26,7 +26,7 @@ const file_allowed = (filename) => {
     }
     else if (config.mode === 'blacklist') {
         if (config.files.filter((mapname) => {
-            return path.posix.relative(path.resolve(path.join(homepath, mapname)), filename) === '';
+            return path.normalize(path.resolve(path.join(homepath, mapname))) === path.normalize(filename);
         }).length > 0) {
             return false;
         }
