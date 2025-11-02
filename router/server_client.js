@@ -32,15 +32,15 @@ server_client.get('/downloads', (req, res) => {
     }));
 });
 
-server_client.get('/downloads/:file', (req, res) => {
-    if (!req.params || !req.params.file) {
+server_client.get('/downloads/:path(*)', (req, res) => {
+    if (!req.params || !req.params.path) {
         res.status(404).send('Invalid file.');
         return;
     }
 
-    const file = req.params.file;
+    const file = req.params.path;
     const match = all_downloads.filter((download) => {
-        return (download.name === file);
+        return (path.relative(download.name, file) === '');
     });
 
     if (!match.length) {
