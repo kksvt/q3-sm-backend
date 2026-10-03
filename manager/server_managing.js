@@ -42,7 +42,7 @@ const q3_launch = () => {
     if (prelaunch_script && prelaunch_script.length > 0) {
         console.log(`Executing prelaunch script ${prelaunch_script}`);
 
-        const prelaunch = spawn(prelaunch_script, []);
+        const prelaunch = spawnSync(prelaunch_script, []);
 
         prelaunch.stdout.on('data', (chunk) => {
             console.log(chunk.toString());
