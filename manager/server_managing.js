@@ -44,10 +44,10 @@ const q3_launch = () => {
 
         const {stdout, stderr} = spawnSync(prelaunch_script, [], {timeout: 5000});
 
-        console.log(stdout);
+        console.log(stdout.toString());
 
         if (stderr) {
-            console.error(stderr);
+            console.error(stderr.toString());
         }
     }
     
