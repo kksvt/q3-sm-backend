@@ -42,21 +42,13 @@ const q3_launch = () => {
     if (prelaunch_script && prelaunch_script.length > 0) {
         console.log(`Executing prelaunch script ${prelaunch_script}`);
 
-        const prelaunch = spawnSync(prelaunch_script, []);
+        const {stdout, stderr} = spawnSync(prelaunch_script, [], {timeout: 5000});
 
-        prelaunch.stdout.on('data', (chunk) => {
-            console.log(chunk.toString());
-        });
+        console.log(stdout);
 
-        prelaunch.stderr.on('data', (chunk) => {
-            console.error(chunk.toString());
-        });
-
-        prelaunch.on('close', (code) => {
-            console.log(`Script child process exited with code ${code}`);
-        });
-
-        prelaunch
+        if (stderr) {
+            console.error(stderr);
+        }
     }
     
     console.log(`Starting game server on port ${game_port}`);
