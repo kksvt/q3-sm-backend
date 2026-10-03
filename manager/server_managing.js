@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const dgram = require('dgram');
 const { clearInterval } = require('timers');
 
@@ -42,13 +42,21 @@ const q3_launch = () => {
     if (prelaunch_script && prelaunch_script.length > 0) {
         console.log(`Executing prelaunch script ${prelaunch_script}`);
 
-        const { stdout, stderr } = execFileSync(prelaunch_script);
+        const prelaunch = spawn(prelaunch_script, []);
 
-        console.log(stdout);
+        prelaunch.stdout.on('data', (chunk) => {
+            console.log(chunk.toString());
+        });
 
-        if (stderr) {
-            console.error(stderr);
-        }
+        prelaunch.stderr.on('data', (chunk) => {
+            console.error(chunk.toString());
+        });
+
+        prelaunch.on('close', (code) => {
+            console.log(`Script child process exited with code ${code}`);
+        });
+
+        prelaunch
     }
     
     console.log(`Starting game server on port ${game_port}`);
