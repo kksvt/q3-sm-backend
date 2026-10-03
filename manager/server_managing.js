@@ -7,6 +7,7 @@ require('dotenv').config();
 const server_ip = process.env.SERVER_IP;
 const launch_bin = process.env.SERVER_BIN_PATH;
 const fs_homepath = process.env.SERVER_HOMEPATH;
+const prelaunch_script = process.env.PRELAUNCH_SCRIPT;
 const game_port = process.env.SERVER_PORT;
 const launch_args = ['+set', 'fs_homepath', fs_homepath, '+set', 'net_port', game_port, ...process.env.SERVER_ARGS.split(' ')];
 const rcon = process.env.RCON_PASSWORD;
@@ -36,6 +37,18 @@ const set_q3_onprint = (func) => {
 const q3_launch = () => {
     if (game_server_running) {
         return;
+    }
+
+    if (prelaunch_script && prelaunch_script.length > 0) {
+        console.log(`Executing prelaunch script ${prelaunch_script}`);
+
+        const { stdout, stderr } = execFileSync(prelaunch_script);
+
+        console.log(stdout);
+
+        if (stderr) {
+            console.error(stderr);
+        }
     }
     
     console.log(`Starting game server on port ${game_port}`);
